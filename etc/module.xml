@@ -9,6 +9,7 @@
     <module name="Space_BlogGraphQl">
         <sequence>
             <module name="Magento_GraphQl"/>
+            <module name="Space_Blog"/>
         </sequence>
     </module>
 </config>
