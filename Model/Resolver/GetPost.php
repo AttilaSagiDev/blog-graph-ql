@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © 2023, Open Software License ("OSL") v. 3.0
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
 declare(strict_types=1);
@@ -10,6 +11,7 @@ namespace Space\BlogGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Space\BlogGraphQl\Model\Resolver\DataProvider\Post as PostDataProvider;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -38,7 +40,7 @@ class GetPost implements ResolverInterface
      * Resolver
      *
      * @param Field $field
-     * @param $context
+     * @param ContextInterface $context
      * @param ResolveInfo $info
      * @param array|null $value
      * @param array|null $args
@@ -54,12 +56,12 @@ class GetPost implements ResolverInterface
         array $args = null
     ): array {
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
-        if (!isset($args['blog_id']) || $args['blog_id'] < 1) {
+        if (!isset($args['post_id']) || $args['post_id'] < 1) {
             throw new GraphQlInputException(__('Post ID is required and value must be greater than 0.'));
         }
 
         try {
-            $postData = $this->postDataProvider->getPostById($args['blog_id'], $storeId);
+            $postData = $this->postDataProvider->getPostById($args['post_id'], $storeId);
         } catch (NoSuchEntityException|LocalizedException $e) {
             throw new GraphQlNoSuchEntityException(__($e->getMessage()));
         }

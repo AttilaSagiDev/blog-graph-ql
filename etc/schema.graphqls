@@ -1,4 +1,6 @@
-# Copyright © 2023, Open Software License ("OSL") v. 3.0
+# Copyright (c) 2024 Attila Sagi
+# @license http://www.opensource.org/licenses/mit-license.html  MIT License
+
 
 type Query {
     posts (
@@ -7,7 +9,7 @@ type Query {
     ): PostsList @resolver(class: "Space\\BlogGraphQl\\Model\\Resolver\\Posts") @doc(description: "Return post list from Space Blog module.")
 
     getPost (
-        blog_id: Int @doc(description: "Specifies the ID of the post.")
+        post_id: Int @doc(description: "Specifies the ID of the post.")
     ): Post @resolver(class: "Space\\BlogGraphQl\\Model\\Resolver\\GetPost") @doc(description: "Return post by ID from Space Blog module.")
 }
 
@@ -18,7 +20,7 @@ type PostsList @doc(description: "Contains a collection of `Posts` objects and p
 }
 
 type Post @doc(description: "Defines details about an individual blog post.") {
-    blog_id: Int! @doc(description: "The ID for a post.")
+    post_id: Int! @doc(description: "The ID for a post.")
     title: String! @doc(description: "Required. The title of the post.")
     content: String! @doc(description: "Required. The content of the post.")
     author: String! @doc(description: "Required. The author of the post.")

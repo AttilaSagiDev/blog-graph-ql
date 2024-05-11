@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © 2023, Open Software License ("OSL") v. 3.0
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
 declare(strict_types=1);
@@ -8,9 +9,9 @@ declare(strict_types=1);
 namespace Space\BlogGraphQl\Model\Resolver\DataProvider;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Space\Blog\Api\BlogRepositoryInterface;
+use Space\Blog\Api\PostRepositoryInterface;
 use Magento\Store\Model\Store;
-use Space\Blog\Api\Data\BlogInterface;
+use Space\Blog\Api\Data\PostInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
@@ -22,22 +23,22 @@ class PostList
     private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     /**
-     * @var BlogRepositoryInterface
+     * @var PostRepositoryInterface
      */
-    private BlogRepositoryInterface $blogRepository;
+    private PostRepositoryInterface $postRepository;
 
     /**
      * Constructor
      *
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param BlogRepositoryInterface $blogRepository
+     * @param PostRepositoryInterface $postRepository
      */
     public function __construct(
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        BlogRepositoryInterface $blogRepository
+        PostRepositoryInterface $postRepository
     ) {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->blogRepository = $blogRepository;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -54,11 +55,11 @@ class PostList
     {
         $searchCriteria = $this->searchCriteriaBuilder
             ->addFilter(Store::STORE_ID, [$storeId, Store::DEFAULT_STORE_ID], 'in')
-            ->addFilter(BlogInterface::IS_ACTIVE, true)
+            ->addFilter(PostInterface::IS_ACTIVE, true)
             ->setPageSize($pageSize)
             ->setCurrentPage($currentPage)->create();
 
-        $postListResults = $this->blogRepository->getList($searchCriteria);
+        $postListResults = $this->postRepository->getList($searchCriteria);
 
         if (!$postListResults->getTotalCount()) {
             throw new NoSuchEntityException(__('The post list is empty.'));
@@ -73,13 +74,13 @@ class PostList
         $postList = [];
         foreach ($postListResults->getItems() as $post) {
             $postList['items'][] = [
-                BlogInterface::BLOG_ID => $post->getId(),
-                BlogInterface::TITLE => $post->getTitle(),
-                BlogInterface::CONTENT => $post->getContent(),
-                BlogInterface::AUTHOR => $post->getAuthor(),
-                BlogInterface::CREATION_TIME => $post->getCreationTime(),
-                BlogInterface::UPDATE_TIME => $post->getUpdateTime(),
-                BlogInterface::IS_ACTIVE => $post->isActive()
+                PostInterface::POST_ID => $post->getId(),
+                PostInterface::TITLE => $post->getTitle(),
+                PostInterface::CONTENT => $post->getContent(),
+                PostInterface::AUTHOR => $post->getAuthor(),
+                PostInterface::CREATION_TIME => $post->getCreationTime(),
+                PostInterface::UPDATE_TIME => $post->getUpdateTime(),
+                PostInterface::IS_ACTIVE => $post->isActive()
             ];
         }
 
