@@ -11,6 +11,7 @@ namespace Space\BlogGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Space\BlogGraphQl\Model\Resolver\DataProvider\PostList as PostListDataProvider;
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\LocalizedException;
@@ -39,7 +40,7 @@ class Posts implements ResolverInterface
      * Resolver
      *
      * @param Field $field
-     * @param $context
+     * @param ContextInterface $context
      * @param ResolveInfo $info
      * @param array|null $value
      * @param array|null $args
