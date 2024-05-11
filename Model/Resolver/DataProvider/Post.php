@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © 2023, Open Software License ("OSL") v. 3.0
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
 declare(strict_types=1);
@@ -8,8 +9,8 @@ declare(strict_types=1);
 namespace Space\BlogGraphQl\Model\Resolver\DataProvider;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Space\Blog\Api\BlogRepositoryInterface;
-use Space\Blog\Api\Data\BlogInterface;
+use Space\Blog\Api\PostRepositoryInterface;
+use Space\Blog\Api\Data\PostInterface;
 use Magento\Store\Model\Store;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -22,55 +23,57 @@ class Post
     private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     /**
-     * @var BlogRepositoryInterface
+     * @var PostRepositoryInterface
      */
-    private BlogRepositoryInterface $blogRepository;
+    private PostRepositoryInterface $postRepository;
 
     /**
+     * Constructor
+     *
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param BlogRepositoryInterface $blogRepository
+     * @param PostRepositoryInterface $postRepository
      */
     public function __construct(
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        BlogRepositoryInterface $blogRepository
+        PostRepositoryInterface $postRepository
     ) {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->blogRepository = $blogRepository;
+        $this->postRepository = $postRepository;
     }
 
     /**
      * Get post by ID
      *
-     * @param int $blogId
+     * @param int $postId
      * @param int $storeId
      * @return array
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    public function getPostById(int $blogId, int $storeId): array
+    public function getPostById(int $postId, int $storeId): array
     {
         $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(BlogInterface::BLOG_ID, $blogId)
+            ->addFilter(PostInterface::POST_ID, $postId)
             ->addFilter(Store::STORE_ID, [$storeId, Store::DEFAULT_STORE_ID], 'in')
-            ->addFilter(BlogInterface::IS_ACTIVE, true)->create();
+            ->addFilter(PostInterface::IS_ACTIVE, true)->create();
 
-        $postResults = $this->blogRepository->getList($searchCriteria)->getItems();
+        $postResults = $this->postRepository->getList($searchCriteria)->getItems();
 
         if (empty($postResults)) {
             throw new NoSuchEntityException(
-                __('The post with the "%1" ID doesn\'t exist.', $blogId)
+                __('The post with the "%1" ID doesn\'t exist.', $postId)
             );
         }
 
         $post = current($postResults);
         return [
-            BlogInterface::BLOG_ID => $post->getId(),
-            BlogInterface::TITLE => $post->getTitle(),
-            BlogInterface::CONTENT => $post->getContent(),
-            BlogInterface::AUTHOR => $post->getAuthor(),
-            BlogInterface::CREATION_TIME => $post->getCreationTime(),
-            BlogInterface::UPDATE_TIME => $post->getUpdateTime(),
-            BlogInterface::IS_ACTIVE => $post->isActive()
+            PostInterface::POST_ID => $post->getId(),
+            PostInterface::TITLE => $post->getTitle(),
+            PostInterface::CONTENT => $post->getContent(),
+            PostInterface::AUTHOR => $post->getAuthor(),
+            PostInterface::CREATION_TIME => $post->getCreationTime(),
+            PostInterface::UPDATE_TIME => $post->getUpdateTime(),
+            PostInterface::IS_ACTIVE => $post->isActive()
         ];
     }
 }

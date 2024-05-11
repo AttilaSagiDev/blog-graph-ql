@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © 2023, Open Software License ("OSL") v. 3.0
+ * Copyright (c) 2024 Attila Sagi
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
 declare(strict_types=1);
@@ -54,12 +55,12 @@ class GetPost implements ResolverInterface
         array $args = null
     ): array {
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
-        if (!isset($args['blog_id']) || $args['blog_id'] < 1) {
+        if (!isset($args['post_id']) || $args['post_id'] < 1) {
             throw new GraphQlInputException(__('Post ID is required and value must be greater than 0.'));
         }
 
         try {
-            $postData = $this->postDataProvider->getPostById($args['blog_id'], $storeId);
+            $postData = $this->postDataProvider->getPostById($args['post_id'], $storeId);
         } catch (NoSuchEntityException|LocalizedException $e) {
             throw new GraphQlNoSuchEntityException(__($e->getMessage()));
         }
